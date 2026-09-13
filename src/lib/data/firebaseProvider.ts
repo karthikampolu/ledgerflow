@@ -55,6 +55,28 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/**
+ * Firestore rejects any field whose value is `undefined` (it must be
+ * omitted entirely, or explicitly deleted). Our domain types use
+ * `field?: string` for optional data, which in plain JS objects becomes
+ * `field: undefined` rather than an absent key — so every value written
+ * to Firestore is recursively cleaned of `undefined` first.
+ */
+function stripUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((v) => stripUndefined(v)) as unknown as T;
+  }
+  if (value !== null && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (v === undefined) continue;
+      out[k] = stripUndefined(v);
+    }
+    return out as T;
+  }
+  return value;
+}
+
 export class FirebaseProvider implements DataProvider {
   async signUp(email: string, password: string, businessName: string, displayName: string): Promise<AuthResult> {
     const cred = await createUserWithEmailAndPassword(requireAuth(), email, password);
@@ -71,7 +93,7 @@ export class FirebaseProvider implements DataProvider {
       taxRateDefault: 8,
       createdAt: new Date().toISOString(),
     };
-    await setDoc(doc(requireDb(), "businesses", businessId), business);
+    await setDoc(doc(requireDb(), "businesses", businessId), stripUndefined(business));
 
     const batch = writeBatch(requireDb());
     for (const seed of DEFAULT_CHART_OF_ACCOUNTS) {
@@ -85,16 +107,19 @@ export class FirebaseProvider implements DataProvider {
         isSystem: true,
         createdAt: new Date().toISOString(),
       };
-      batch.set(doc(businessSub(businessId, "accounts"), account.id), account);
+      batch.set(doc(businessSub(businessId, "accounts"), account.id), stripUndefined(account));
     }
     await batch.commit();
 
-    await setDoc(doc(requireDb(), "users", cred.user.uid), {
-      uid: cred.user.uid,
-      email,
-      displayName: displayName || email,
-      businessId,
-    });
+    await setDoc(
+      doc(requireDb(), "users", cred.user.uid),
+      stripUndefined({
+        uid: cred.user.uid,
+        email,
+        displayName: displayName || email,
+        businessId,
+      })
+    );
 
     return { uid: cred.user.uid, email };
   }
@@ -125,7 +150,7 @@ export class FirebaseProvider implements DataProvider {
   }
 
   async updateBusiness(businessId: string, patch: Partial<Business>): Promise<void> {
-    await updateDoc(doc(requireDb(), "businesses", businessId), patch);
+    await updateDoc(doc(requireDb(), "businesses", businessId), stripUndefined(patch));
   }
 
   async listAccounts(businessId: string): Promise<Account[]> {
@@ -135,7 +160,7 @@ export class FirebaseProvider implements DataProvider {
 
   async createAccount(businessId: string, account: Omit<Account, "id" | "createdAt">, actor: AuthResult): Promise<Account> {
     const newAccount: Account = { ...account, id: uuid(), createdAt: new Date().toISOString() };
-    await setDoc(doc(businessSub(businessId, "accounts"), newAccount.id), newAccount);
+    await setDoc(doc(businessSub(businessId, "accounts"), newAccount.id), stripUndefined(newAccount));
     await this.logAudit(businessId, {
       businessId,
       uid: actor.uid,
@@ -149,7 +174,7 @@ export class FirebaseProvider implements DataProvider {
   }
 
   async updateAccount(businessId: string, accountId: string, patch: Partial<Account>, actor: AuthResult): Promise<void> {
-    await updateDoc(doc(businessSub(businessId, "accounts"), accountId), patch);
+    await updateDoc(doc(businessSub(businessId, "accounts"), accountId), stripUndefined(patch));
     await this.logAudit(businessId, {
       businessId,
       uid: actor.uid,
@@ -194,7 +219,7 @@ export class FirebaseProvider implements DataProvider {
       createdAt: new Date().toISOString(),
       createdBy: actor.uid,
     };
-    await setDoc(doc(businessSub(businessId, "journalEntries"), je.id), je);
+    await setDoc(doc(businessSub(businessId, "journalEntries"), je.id), stripUndefined(je));
 
     const taxAmount = round2((input.amount * (input.taxRate || 0)) / 100);
     const tx: Transaction = {
@@ -216,7 +241,7 @@ export class FirebaseProvider implements DataProvider {
       createdAt: je.createdAt,
       createdBy: actor.uid,
     };
-    await setDoc(doc(businessSub(businessId, "transactions"), tx.id), tx);
+    await setDoc(doc(businessSub(businessId, "transactions"), tx.id), stripUndefined(tx));
 
     await this.logAudit(businessId, {
       businessId,
@@ -268,7 +293,7 @@ export class FirebaseProvider implements DataProvider {
       createdAt: new Date().toISOString(),
       createdBy: actor.uid,
     };
-    await setDoc(doc(businessSub(businessId, "invoices"), invoice.id), invoice);
+    await setDoc(doc(businessSub(businessId, "invoices"), invoice.id), stripUndefined(invoice));
     await updateDoc(doc(businessSub(businessId, "transactions"), transaction.id), { invoiceId: invoice.id });
 
     await this.logAudit(businessId, {
@@ -337,7 +362,7 @@ export class FirebaseProvider implements DataProvider {
       createdAt: new Date().toISOString(),
     }));
     for (const bt of imported) {
-      batch.set(doc(businessSub(businessId, "bankTransactions"), bt.id), bt);
+      batch.set(doc(businessSub(businessId, "bankTransactions"), bt.id), stripUndefined(bt));
     }
     await batch.commit();
 
@@ -389,11 +414,14 @@ export class FirebaseProvider implements DataProvider {
 
   async logAudit(businessId: string, entry: Omit<AuditLogEntry, "id" | "timestamp">): Promise<void> {
     const id = uuid();
-    await setDoc(doc(businessSub(businessId, "auditLog"), id), {
-      ...entry,
-      id,
-      timestamp: new Date().toISOString(),
-    });
+    await setDoc(
+      doc(businessSub(businessId, "auditLog"), id),
+      stripUndefined({
+        ...entry,
+        id,
+        timestamp: new Date().toISOString(),
+      })
+    );
   }
 }
 
