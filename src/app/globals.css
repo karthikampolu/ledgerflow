@@ -93,3 +93,34 @@ table {
 .animate-fade-in {
   animation: fade-in 0.12s ease-out;
 }
+
+/*
+ * Print isolation for generated documents (invoices/bills). When printing
+ * (or "Save as PDF"), only the #invoice-print-area subtree is shown — the
+ * app chrome (sidebar, topbar, modal backdrop, buttons marked .no-print)
+ * is hidden entirely so the output reads as a real standalone document.
+ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoice-print-area,
+  #invoice-print-area * {
+    visibility: visible;
+  }
+  #invoice-print-area {
+    /* position: fixed (not absolute) so this escapes the modal's own
+       max-height/overflow-y-auto scroll container, which would otherwise
+       clip the document to the on-screen scrollable viewport. */
+    position: fixed;
+    inset: 0.4in;
+    width: auto;
+    height: auto;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

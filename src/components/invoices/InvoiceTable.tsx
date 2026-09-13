@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Eye } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge, statusTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -8,10 +9,12 @@ import { formatCurrency, formatDate, todayIso } from "@/lib/utils";
 import { Invoice } from "@/lib/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { RecordPaymentModal } from "@/components/invoices/RecordPaymentModal";
+import { InvoiceDocumentModal } from "@/components/invoices/InvoiceDocumentModal";
 
 export function InvoiceTable({ invoices, emptyLabel }: { invoices: Invoice[]; emptyLabel: string }) {
   const { business } = useAuth();
   const [payingInvoice, setPayingInvoice] = useState<Invoice | null>(null);
+  const [viewingInvoice, setViewingInvoice] = useState<Invoice | null>(null);
   const today = todayIso();
 
   function effectiveStatus(inv: Invoice): string {
@@ -47,7 +50,15 @@ export function InvoiceTable({ invoices, emptyLabel }: { invoices: Invoice[]; em
               const status = effectiveStatus(inv);
               return (
                 <tr key={inv.id} className="hover:bg-gray-50">
-                  <td className="px-5 py-3 font-medium text-gray-900">{inv.number}</td>
+                  <td className="px-5 py-3 font-medium">
+                    <button
+                      onClick={() => setViewingInvoice(inv)}
+                      className="text-[var(--brand)] hover:underline"
+                      title="View invoice"
+                    >
+                      {inv.number}
+                    </button>
+                  </td>
                   <td className="px-5 py-3 text-gray-700">{inv.partyName}</td>
                   <td className="whitespace-nowrap px-5 py-3 text-gray-500">{formatDate(inv.issueDate)}</td>
                   <td className="whitespace-nowrap px-5 py-3 text-gray-500">{formatDate(inv.dueDate)}</td>
@@ -56,12 +67,17 @@ export function InvoiceTable({ invoices, emptyLabel }: { invoices: Invoice[]; em
                   <td className="px-5 py-3">
                     <Badge tone={statusTone(status)}>{status.replace("_", " ")}</Badge>
                   </td>
-                  <td className="px-5 py-3 text-right">
-                    {balance > 0 && (
-                      <Button size="sm" variant="secondary" onClick={() => setPayingInvoice(inv)}>
-                        Record Payment
+                  <td className="px-5 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button size="sm" variant="secondary" onClick={() => setViewingInvoice(inv)}>
+                        <Eye size={13} /> View
                       </Button>
-                    )}
+                      {balance > 0 && (
+                        <Button size="sm" variant="secondary" onClick={() => setPayingInvoice(inv)}>
+                          Record Payment
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
@@ -70,6 +86,7 @@ export function InvoiceTable({ invoices, emptyLabel }: { invoices: Invoice[]; em
         </table>
       </div>
       <RecordPaymentModal invoice={payingInvoice} onClose={() => setPayingInvoice(null)} />
+      <InvoiceDocumentModal invoice={viewingInvoice} onClose={() => setViewingInvoice(null)} />
     </Card>
   );
 }
