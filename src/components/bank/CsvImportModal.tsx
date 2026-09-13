@@ -96,14 +96,14 @@ ${new Date().toISOString().slice(0, 10)},CHECK DEPOSIT,540.00`;
   return (
     <Modal open={open} onClose={onClose} title="Import Bank Transactions (CSV)" wide>
       <div className="space-y-4">
-        <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-6 py-8 text-center hover:border-indigo-400">
+        <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-6 py-8 text-center hover:border-[var(--brand)]">
           <UploadCloud className="text-gray-400" size={28} />
           <span className="text-sm font-medium text-gray-700">{fileName || "Click to choose a CSV file"}</span>
           <span className="text-xs text-gray-400">Expected columns: Date, Description, Amount (or Debit/Credit)</span>
           <input type="file" accept=".csv" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
         </label>
 
-        <button onClick={loadSampleCsv} className="text-xs font-medium text-indigo-700 hover:underline">
+        <button onClick={loadSampleCsv} className="text-xs font-medium text-[var(--brand)] hover:underline">
           Use a sample CSV instead
         </button>
 

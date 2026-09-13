@@ -21,13 +21,13 @@ export default function InvoicesPage() {
         <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
           <button
             onClick={() => setTab("receivable")}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "receivable" ? "bg-indigo-700 text-white" : "text-gray-600"}`}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "receivable" ? "bg-[var(--brand)] text-white" : "text-gray-600"}`}
           >
             Customer Invoices
           </button>
           <button
             onClick={() => setTab("payable")}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "payable" ? "bg-indigo-700 text-white" : "text-gray-600"}`}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "payable" ? "bg-[var(--brand)] text-white" : "text-gray-600"}`}
           >
             Vendor Bills
           </button>

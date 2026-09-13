@@ -6,7 +6,7 @@ import { useBusinessData } from "@/contexts/BusinessDataContext";
 import { StatCard } from "@/components/ui/StatCard";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { Badge, statusTone } from "@/components/ui/Badge";
-import { formatCurrency, formatDate, startOfMonth, startOfYear, todayIso } from "@/lib/utils";
+import { currencySymbol, formatCurrency, formatDate, startOfMonth, startOfYear, todayIso } from "@/lib/utils";
 import { computeProfitAndLoss } from "@/lib/accounting/reports";
 import { getAccountBalance } from "@/lib/accounting/ledger";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -62,16 +62,17 @@ export default function DashboardPage() {
       ) : (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Cash & Bank" value={formatCurrency(kpis.cashBalance, business?.currency)} icon={<Wallet size={16} />} />
+            <StatCard label="Cash & Bank" value={formatCurrency(kpis.cashBalance, business?.currency)} icon={<Wallet size={16} />} tone="brand" />
             <StatCard
               label="Net Income (MTD)"
               value={formatCurrency(kpis.mtd.netIncome, business?.currency)}
               delta={`${formatCurrency(kpis.mtd.totalRevenue, business?.currency)} revenue`}
               deltaTone={kpis.mtd.netIncome >= 0 ? "positive" : "negative"}
               icon={kpis.mtd.netIncome >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+              tone={kpis.mtd.netIncome >= 0 ? "positive" : "negative"}
             />
-            <StatCard label="Accounts Receivable" value={formatCurrency(kpis.arBalance, business?.currency)} icon={<Inbox size={16} />} />
-            <StatCard label="Accounts Payable" value={formatCurrency(kpis.apBalance, business?.currency)} icon={<Send size={16} />} />
+            <StatCard label="Accounts Receivable" value={formatCurrency(kpis.arBalance, business?.currency)} icon={<Inbox size={16} />} tone="brand" />
+            <StatCard label="Accounts Payable" value={formatCurrency(kpis.apBalance, business?.currency)} icon={<Send size={16} />} tone="amber" />
           </div>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -82,20 +83,20 @@ export default function DashboardPage() {
                   <AreaChart data={monthlyTrend} margin={{ left: -10 }}>
                     <defs>
                       <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#4338ca" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#4338ca" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#5b3df0" stopOpacity={0.28} />
+                        <stop offset="95%" stopColor="#5b3df0" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="exp" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#dc2626" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#e11d48" stopOpacity={0.2} />
+                        <stop offset="95%" stopColor="#e11d48" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
-                    <Tooltip formatter={(v) => formatCurrency(Number(v), business?.currency)} />
-                    <Area type="monotone" dataKey="revenue" stroke="#4338ca" fill="url(#rev)" strokeWidth={2} name="Revenue" />
-                    <Area type="monotone" dataKey="expenses" stroke="#dc2626" fill="url(#exp)" strokeWidth={2} name="Expenses" />
+                    <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${currencySymbol(business?.currency)}${v / 1000}k`} />
+                    <Tooltip formatter={(v) => formatCurrency(Number(v), business?.currency)} contentStyle={{ borderRadius: 10, border: "1px solid #e6e8ef", boxShadow: "0 8px 24px -12px rgba(16,17,28,0.18)" }} />
+                    <Area type="monotone" dataKey="revenue" stroke="#5b3df0" fill="url(#rev)" strokeWidth={2.5} name="Revenue" />
+                    <Area type="monotone" dataKey="expenses" stroke="#e11d48" fill="url(#exp)" strokeWidth={2.5} name="Expenses" />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardBody>
@@ -108,9 +109,9 @@ export default function DashboardPage() {
                   <BarChart data={monthlyTrend} margin={{ left: -10 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                     <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
-                    <Tooltip formatter={(v) => formatCurrency(Number(v), business?.currency)} />
-                    <Bar dataKey="netIncome" radius={[4, 4, 0, 0]} fill="#059669" name="Net Income" />
+                    <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} axisLine={false} tickLine={false} tickFormatter={(v) => `${currencySymbol(business?.currency)}${v / 1000}k`} />
+                    <Tooltip formatter={(v) => formatCurrency(Number(v), business?.currency)} contentStyle={{ borderRadius: 10, border: "1px solid #e6e8ef", boxShadow: "0 8px 24px -12px rgba(16,17,28,0.18)" }} />
+                    <Bar dataKey="netIncome" radius={[6, 6, 0, 0]} fill="#0d9488" name="Net Income" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardBody>
@@ -119,7 +120,7 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-2">
-              <CardHeader title="Recent Transactions" action={<Link href="/transactions" className="text-xs font-medium text-indigo-700 hover:underline">View all</Link>} />
+              <CardHeader title="Recent Transactions" action={<Link href="/transactions" className="text-xs font-medium text-[var(--brand)] hover:underline">View all</Link>} />
               <div className="divide-y divide-gray-100">
                 {recentTransactions.length === 0 && <p className="p-5 text-sm text-gray-400">No transactions yet.</p>}
                 {recentTransactions.map((t) => (
@@ -138,7 +139,7 @@ export default function DashboardPage() {
             </Card>
 
             <Card>
-              <CardHeader title="Overdue Invoices" action={<Link href="/receivables" className="text-xs font-medium text-indigo-700 hover:underline">View all</Link>} />
+              <CardHeader title="Overdue Invoices" action={<Link href="/receivables" className="text-xs font-medium text-[var(--brand)] hover:underline">View all</Link>} />
               <div className="divide-y divide-gray-100">
                 {overdueInvoices.length === 0 && <p className="p-5 text-sm text-gray-400">Nothing overdue. 🎉</p>}
                 {overdueInvoices.slice(0, 6).map((inv) => (

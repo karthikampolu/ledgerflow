@@ -32,10 +32,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[var(--brand-light)] via-white to-gray-50 px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-700 text-lg font-bold text-white">L</div>
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg brand-gradient text-lg font-bold text-white shadow-md">L</div>
           <h1 className="text-xl font-semibold text-gray-900">Create your LedgerFlow account</h1>
           <p className="mt-1 text-center text-sm text-gray-500">Set up double-entry accounting automation in minutes</p>
         </div>
@@ -67,7 +67,7 @@ export default function SignupPage() {
 
         <p className="mt-4 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-indigo-700 hover:underline">
+          <Link href="/login" className="font-medium text-[var(--brand)] hover:underline">
             Sign in
           </Link>
         </p>

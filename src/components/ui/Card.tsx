@@ -3,7 +3,7 @@ import { cx } from "@/lib/utils";
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cx("rounded-xl border border-gray-200 bg-white shadow-sm", className)}>
+    <div className={cx("card-shadow rounded-xl border border-gray-200/70 bg-white", className)}>
       {children}
     </div>
   );

@@ -78,7 +78,7 @@ export default function BankPage() {
                       {formatCurrency(b.amount, business?.currency)}
                     </span>
                     {suggestion && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[var(--brand-light)] px-2 py-0.5 text-xs font-medium text-[var(--brand)]">
                         <Sparkles size={11} /> Suggested match ({Math.round(suggestion.confidence * 100)}%)
                       </span>
                     )}

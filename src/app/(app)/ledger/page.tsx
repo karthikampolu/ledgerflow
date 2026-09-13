@@ -35,10 +35,10 @@ export default function GeneralLedgerPage() {
   return (
     <AppShell title="General Ledger">
       <div className="mb-4 inline-flex rounded-lg border border-gray-200 bg-white p-1">
-        <button onClick={() => setTab("journal")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "journal" ? "bg-indigo-700 text-white" : "text-gray-600"}`}>
+        <button onClick={() => setTab("journal")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "journal" ? "bg-[var(--brand)] text-white" : "text-gray-600"}`}>
           Journal Entries
         </button>
-        <button onClick={() => setTab("trial")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "trial" ? "bg-indigo-700 text-white" : "text-gray-600"}`}>
+        <button onClick={() => setTab("trial")} className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "trial" ? "bg-[var(--brand)] text-white" : "text-gray-600"}`}>
           Trial Balance
         </button>
       </div>

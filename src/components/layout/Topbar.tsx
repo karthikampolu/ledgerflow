@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, Menu, User as UserIcon } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { NAV_ITEMS } from "@/components/layout/Sidebar";
+import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cx } from "@/lib/utils";
@@ -32,8 +33,9 @@ export function Topbar({ title }: { title: string }) {
             Local demo mode
           </span>
         )}
+        <CurrencySwitcher />
         <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-2.5 py-1.5">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-700">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--brand-light)] text-[var(--brand)]">
             <UserIcon size={13} />
           </div>
           <span className="hidden text-xs font-medium text-gray-700 sm:inline">{appUser?.displayName || appUser?.email}</span>
@@ -62,7 +64,7 @@ export function Topbar({ title }: { title: string }) {
                   onClick={() => setMobileOpen(false)}
                   className={cx(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium",
-                    active ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-50"
+                    active ? "bg-[var(--brand-light)] text-[var(--brand)]" : "text-gray-600 hover:bg-gray-50"
                   )}
                 >
                   <Icon size={17} />

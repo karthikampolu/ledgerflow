@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useBusinessData } from "@/contexts/BusinessDataContext";
 import { db } from "@/lib/data";
 import { PaymentMethod, TransactionType } from "@/lib/types";
-import { todayIso, isoDaysFromNow } from "@/lib/utils";
+import { todayIso, isoDaysFromNow, formatCurrency } from "@/lib/utils";
 import { computeTaxAmount } from "@/lib/accounting/rules";
 
 const TYPE_LABEL: Record<TransactionType, string> = {
@@ -144,8 +144,8 @@ export function TransactionModal({ open, onClose, defaultType }: { open: boolean
         </Field>
 
         {isCredit && (type === "sale" || type === "purchase") && (
-          <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3">
-            <label className="flex items-center gap-2 text-sm font-medium text-indigo-900">
+          <div className="rounded-lg border border-[var(--brand-light)] bg-[var(--brand-light)] p-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-[var(--brand-dark)]">
               <input type="checkbox" checked={makeInvoice} onChange={(e) => setMakeInvoice(e.target.checked)} className="rounded" />
               Automatically generate {type === "sale" ? "an invoice" : "a bill"}
             </label>
@@ -161,7 +161,7 @@ export function TransactionModal({ open, onClose, defaultType }: { open: boolean
 
         <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 text-sm">
           <span className="text-gray-500">Total amount</span>
-          <span className="font-semibold text-gray-900 num">${total.toFixed(2)}</span>
+          <span className="font-semibold text-gray-900 num">{formatCurrency(total, business?.currency)}</span>
         </div>
 
         {error && <p className="text-xs text-red-600">{error}</p>}

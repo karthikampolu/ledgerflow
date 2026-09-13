@@ -1,5 +1,20 @@
+const CURRENCY_LOCALE: Record<string, string> = {
+  INR: "en-IN",
+  USD: "en-US",
+  EUR: "en-GB",
+  GBP: "en-GB",
+};
+
 export function formatCurrency(amount: number, currency: string = "USD"): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
+  const locale = CURRENCY_LOCALE[currency] || "en-US";
+  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+}
+
+/** Just the currency's symbol (e.g. "$", "₹"), for compact chart axes and inline totals. */
+export function currencySymbol(currency: string = "USD"): string {
+  const locale = CURRENCY_LOCALE[currency] || "en-US";
+  const parts = new Intl.NumberFormat(locale, { style: "currency", currency }).formatToParts(0);
+  return parts.find((p) => p.type === "currency")?.value || "$";
 }
 
 export function formatDate(iso: string): string {

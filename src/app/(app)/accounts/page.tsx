@@ -83,7 +83,7 @@ export default function AccountsPage() {
                         <tr key={a.id} className="hover:bg-gray-50">
                           <td className="px-5 py-2.5 font-mono text-xs text-gray-500">{a.code}</td>
                           <td className="px-5 py-2.5">
-                            <Link href={`/accounts/${a.id}`} className="font-medium text-gray-900 hover:text-indigo-700 hover:underline">
+                            <Link href={`/accounts/${a.id}`} className="font-medium text-gray-900 hover:text-[var(--brand)] hover:underline">
                               {a.name}
                             </Link>
                             {a.isSystem && <Badge tone="gray" className="ml-2">system</Badge>}

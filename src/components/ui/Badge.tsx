@@ -3,17 +3,17 @@ import { cx } from "@/lib/utils";
 type Tone = "gray" | "green" | "red" | "amber" | "indigo" | "blue";
 
 const toneClasses: Record<Tone, string> = {
-  gray: "bg-gray-100 text-gray-700",
-  green: "bg-emerald-50 text-emerald-700",
-  red: "bg-red-50 text-red-700",
-  amber: "bg-amber-50 text-amber-700",
-  indigo: "bg-indigo-50 text-indigo-700",
-  blue: "bg-blue-50 text-blue-700",
+  gray: "bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200",
+  green: "bg-[var(--positive-light)] text-[var(--positive)] ring-1 ring-inset ring-emerald-100",
+  red: "bg-[var(--negative-light)] text-[var(--negative)] ring-1 ring-inset ring-rose-100",
+  amber: "bg-[var(--warning-light)] text-[var(--warning)] ring-1 ring-inset ring-amber-100",
+  indigo: "bg-[var(--brand-light)] text-[var(--brand)] ring-1 ring-inset ring-violet-100",
+  blue: "bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-100",
 };
 
 export function Badge({ children, tone = "gray", className }: { children: React.ReactNode; tone?: Tone; className?: string }) {
   return (
-    <span className={cx("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize", toneClasses[tone], className)}>
+    <span className={cx("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize", toneClasses[tone], className)}>
       {children}
     </span>
   );

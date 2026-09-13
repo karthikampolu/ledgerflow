@@ -52,16 +52,16 @@ export default function ReportsPage() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === t.key ? "bg-indigo-700 text-white" : "text-gray-600"}`}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === t.key ? "bg-[var(--brand)] text-white" : "text-gray-600"}`}
             >
               {t.label}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => quickRange("mtd")} className="text-xs font-medium text-indigo-700 hover:underline">This Month</button>
-          <button onClick={() => quickRange("last30")} className="text-xs font-medium text-indigo-700 hover:underline">Last 30 Days</button>
-          <button onClick={() => quickRange("ytd")} className="text-xs font-medium text-indigo-700 hover:underline">Year to Date</button>
+          <button onClick={() => quickRange("mtd")} className="text-xs font-medium text-[var(--brand)] hover:underline">This Month</button>
+          <button onClick={() => quickRange("last30")} className="text-xs font-medium text-[var(--brand)] hover:underline">Last 30 Days</button>
+          <button onClick={() => quickRange("ytd")} className="text-xs font-medium text-[var(--brand)] hover:underline">Year to Date</button>
           <Input type="date" value={periodStart} onChange={(e) => setPeriodStart(e.target.value)} className="w-40" />
           <span className="text-gray-400">to</span>
           <Input type="date" value={periodEnd} onChange={(e) => setPeriodEnd(e.target.value)} className="w-40" />

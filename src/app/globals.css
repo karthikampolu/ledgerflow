@@ -1,15 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f8fa;
+  --background: #f4f5f9;
   --surface: #ffffff;
-  --foreground: #111827;
+  --surface-muted: #f8f9fc;
+  --foreground: #12131a;
   --muted: #6b7280;
-  --border: #e5e7eb;
-  --brand: #4338ca;
-  --brand-light: #eef2ff;
+  --border: #e6e8ef;
+  --border-strong: #d7dae4;
+
+  --brand: #5b3df0;
+  --brand-dark: #4527d6;
+  --brand-light: #f0edfe;
+  --brand-gradient: linear-gradient(135deg, #6d4df5 0%, #4527d6 100%);
+
+  --accent: #0d9488;
+  --accent-light: #ecfdf9;
+
   --positive: #059669;
-  --negative: #dc2626;
+  --positive-light: #ecfdf5;
+  --negative: #e11d48;
+  --negative-light: #fef1f4;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
 }
 
 @theme inline {
@@ -34,8 +47,11 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: #cbd0dc;
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b4bacb;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -47,4 +63,33 @@ table {
 
 .num {
   font-variant-numeric: tabular-nums;
+}
+
+.brand-gradient {
+  background: var(--brand-gradient);
+}
+
+.card-shadow {
+  box-shadow: 0 1px 2px rgba(16, 17, 28, 0.04), 0 8px 24px -12px rgba(16, 17, 28, 0.10);
+}
+
+.select-none-native {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.12s ease-out;
 }

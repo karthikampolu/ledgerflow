@@ -64,10 +64,10 @@ export default function SettingsPage() {
                 </Field>
                 <Field label="Currency">
                   <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="USD">$ USD - US Dollar</option>
+                    <option value="INR">₹ INR - Indian Rupee</option>
+                    <option value="EUR">€ EUR - Euro</option>
+                    <option value="GBP">£ GBP - British Pound</option>
                   </Select>
                 </Field>
               </div>
