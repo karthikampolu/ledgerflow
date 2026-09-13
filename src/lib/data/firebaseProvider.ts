@@ -274,6 +274,11 @@ export class FirebaseProvider implements DataProvider {
     const invoices = await this.listInvoices(businessId);
     const prefix = kind === "receivable" ? "INV" : "BILL";
     const number = nextSequenceNumber(invoices.filter((i) => i.kind === kind).map((i) => ({ reference: i.number })), prefix);
+    // A transaction generated retroactively (e.g. via "Generate Invoice" on
+    // an already-recorded Cash/Bank transaction) was settled at the time it
+    // was posted — the resulting document must reflect that as already
+    // paid, not as an outstanding balance the customer/vendor still owes.
+    const alreadySettled = transaction.paymentMethod !== "credit";
     const invoice: Invoice = {
       id: uuid(),
       businessId,
@@ -287,8 +292,8 @@ export class FirebaseProvider implements DataProvider {
       taxRate: transaction.taxRate,
       taxAmount: transaction.taxAmount,
       total: transaction.totalAmount,
-      amountPaid: 0,
-      status: "sent",
+      amountPaid: alreadySettled ? transaction.totalAmount : 0,
+      status: alreadySettled ? "paid" : "sent",
       sourceTransactionId: transaction.id,
       createdAt: new Date().toISOString(),
       createdBy: actor.uid,

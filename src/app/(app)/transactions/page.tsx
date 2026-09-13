@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileText, FilePlus2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusinessData } from "@/contexts/BusinessDataContext";
@@ -11,20 +11,27 @@ import { Select } from "@/components/ui/Form";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { TransactionModal } from "@/components/transactions/TransactionModal";
-import { TransactionType } from "@/lib/types";
+import { GenerateInvoiceModal } from "@/components/transactions/GenerateInvoiceModal";
+import { InvoiceDocumentModal } from "@/components/invoices/InvoiceDocumentModal";
+import { Transaction, TransactionType } from "@/lib/types";
 
 const OUTFLOW_TYPES: TransactionType[] = ["purchase", "expense", "payment"];
+const INVOICEABLE_TYPES: TransactionType[] = ["sale", "purchase"];
 
 export default function TransactionsPage() {
   const { business } = useAuth();
-  const { transactions, loading } = useBusinessData();
+  const { transactions, invoices, loading } = useBusinessData();
   const [modalOpen, setModalOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [generatingFor, setGeneratingFor] = useState<Transaction | null>(null);
+  const [viewingInvoiceId, setViewingInvoiceId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     if (typeFilter === "all") return transactions;
     return transactions.filter((t) => t.type === typeFilter);
   }, [transactions, typeFilter]);
+
+  const viewingInvoice = viewingInvoiceId ? invoices.find((i) => i.id === viewingInvoiceId) || null : null;
 
   return (
     <AppShell title="Transactions">
@@ -56,21 +63,23 @@ export default function TransactionsPage() {
                 <th className="px-5 py-3">Method</th>
                 <th className="px-5 py-3">Memo</th>
                 <th className="px-5 py-3 text-right">Amount</th>
+                <th className="px-5 py-3">Document</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-gray-400">Loading…</td>
+                  <td colSpan={7} className="px-5 py-10 text-center text-gray-400">Loading…</td>
                 </tr>
               )}
               {!loading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-gray-400">No transactions recorded yet.</td>
+                  <td colSpan={7} className="px-5 py-10 text-center text-gray-400">No transactions recorded yet.</td>
                 </tr>
               )}
               {filtered.map((t) => {
                 const outflow = OUTFLOW_TYPES.includes(t.type);
+                const linkedInvoice = t.invoiceId ? invoices.find((i) => i.id === t.invoiceId) : undefined;
                 return (
                   <tr key={t.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-5 py-3 text-gray-600">{formatDate(t.date)}</td>
@@ -84,6 +93,19 @@ export default function TransactionsPage() {
                       {outflow ? "-" : "+"}
                       {formatCurrency(t.totalAmount, business?.currency)}
                     </td>
+                    <td className="whitespace-nowrap px-5 py-3">
+                      {linkedInvoice ? (
+                        <Button size="sm" variant="secondary" onClick={() => setViewingInvoiceId(linkedInvoice.id)}>
+                          <FileText size={13} /> {linkedInvoice.number}
+                        </Button>
+                      ) : INVOICEABLE_TYPES.includes(t.type) ? (
+                        <Button size="sm" variant="secondary" onClick={() => setGeneratingFor(t)}>
+                          <FilePlus2 size={13} /> {t.type === "sale" ? "Generate Invoice" : "Generate Bill"}
+                        </Button>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </td>
                   </tr>
                 );
               })}
@@ -93,6 +115,8 @@ export default function TransactionsPage() {
       </Card>
 
       <TransactionModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <GenerateInvoiceModal transaction={generatingFor} onClose={() => setGeneratingFor(null)} />
+      <InvoiceDocumentModal invoice={viewingInvoice} onClose={() => setViewingInvoiceId(null)} />
     </AppShell>
   );
 }
