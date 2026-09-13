@@ -24,7 +24,10 @@ export function TransactionModal({ open, onClose, defaultType }: { open: boolean
   const { accounts, refreshAll } = useBusinessData();
   const [type, setType] = useState<TransactionType>(defaultType || "sale");
   const [date, setDate] = useState(todayIso());
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank");
+  // Opened from the Invoices & Bills page (defaultType set) implies the user
+  // wants an invoice/bill out of this — those only get generated for credit
+  // transactions, so default to Credit in that context instead of Bank.
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(defaultType ? "credit" : "bank");
   const [amount, setAmount] = useState("");
   const [taxRate, setTaxRate] = useState(business?.taxRateDefault?.toString() || "0");
   const [partyName, setPartyName] = useState("");
@@ -102,7 +105,14 @@ export function TransactionModal({ open, onClose, defaultType }: { open: boolean
           <Field label="Date">
             <Input type="date" required value={date} onChange={(e) => setDate(e.target.value)} />
           </Field>
-          <Field label="Payment Method">
+          <Field
+            label="Payment Method"
+            hint={
+              (type === "sale" || type === "purchase") && paymentMethod !== "credit"
+                ? `Switch to "On Credit" to auto-generate ${type === "sale" ? "an invoice" : "a bill"}`
+                : undefined
+            }
+          >
             <Select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}>
               <option value="cash">Cash</option>
               <option value="bank">Bank Transfer</option>
