@@ -16,9 +16,8 @@ import {
   orderBy,
   writeBatch,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuid } from "uuid";
-import { auth, firestore, storage } from "@/lib/firebase";
+import { auth, firestore } from "@/lib/firebase";
 import { DataProvider, AuthResult } from "@/lib/data/provider";
 import {
   Account,
@@ -381,13 +380,6 @@ export class FirebaseProvider implements DataProvider {
       entityId: bankTransactionId,
       summary: `Marked bank transaction as ignored`,
     });
-  }
-
-  async uploadDocument(businessId: string, file: File, path: string): Promise<string> {
-    if (!storage) throw new Error("Firebase Storage is not configured.");
-    const fileRef = ref(storage, `businesses/${businessId}/${path}`);
-    await uploadBytes(fileRef, file);
-    return getDownloadURL(fileRef);
   }
 
   async listAuditLog(businessId: string): Promise<AuditLogEntry[]> {

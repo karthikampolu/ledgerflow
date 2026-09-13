@@ -85,7 +85,6 @@ export interface Transaction {
   accountId?: string; // override account (e.g. specific expense account, or bank account used)
   invoiceId?: string; // linked invoice, if any
   journalEntryId: string;
-  attachmentUrl?: string; // Firebase Storage URL for receipt/document
   createdAt: string;
   createdBy: string;
 }

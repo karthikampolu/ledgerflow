@@ -407,16 +407,6 @@ export class LocalProvider implements DataProvider {
     });
   }
 
-  async uploadDocument(_businessId: string, file: File, _path: string): Promise<string> {
-    // Local demo mode: store the file inline as a data URL (no backend storage available).
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
   async listAuditLog(businessId: string): Promise<AuditLogEntry[]> {
     return read<AuditLogEntry[]>(KEYS.auditLog(businessId), []).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }

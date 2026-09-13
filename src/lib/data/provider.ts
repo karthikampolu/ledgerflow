@@ -63,9 +63,6 @@ export interface DataProvider {
   matchBankTransaction(businessId: string, bankTransactionId: string, transactionId: string, actor: AuthResult): Promise<void>;
   ignoreBankTransaction(businessId: string, bankTransactionId: string, actor: AuthResult): Promise<void>;
 
-  // ---- Documents ----
-  uploadDocument(businessId: string, file: File, path: string): Promise<string>;
-
   // ---- Audit ----
   listAuditLog(businessId: string): Promise<AuditLogEntry[]>;
   logAudit(businessId: string, entry: Omit<AuditLogEntry, "id" | "timestamp">): Promise<void>;

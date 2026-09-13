@@ -7,7 +7,6 @@ A fully functional accounting automation platform: record sales, purchases, expe
 - **Next.js 15 (App Router) + TypeScript** — UI and application logic
 - **Firebase Auth** — authentication
 - **Firestore** — transactions, ledger, invoices, accounts, audit trail
-- **Firebase Storage** — uploaded receipts/documents
 - **Recharts** — dashboard charts
 - **Tailwind CSS** — styling
 - **Vercel** — deployment target
@@ -20,7 +19,7 @@ production use the moment you add Firebase credentials:
 | | Local demo mode (default) | Firebase mode |
 |---|---|---|
 | Activated by | No `NEXT_PUBLIC_FIREBASE_*` env vars set | Valid Firebase config in `.env.local` |
-| Storage | Browser `localStorage` | Firestore + Firebase Storage |
+| Storage | Browser `localStorage` | Firestore |
 | Auth | Simple local email/password (per-browser) | Firebase Authentication |
 | Data on signup | Seeds ~90 days of realistic sales, purchases, expenses, invoices, and a reconciled bank feed for a demo coffee-roasting business | Empty business with a standard Chart of Accounts, ready for real entries |
 
@@ -31,13 +30,13 @@ computed changes between demo and production.
 
 ### Switching to real Firebase
 
-1. Create a Firebase project → enable **Authentication (Email/Password)**,
-   **Firestore**, and **Storage**.
+1. Create a Firebase project → enable **Authentication (Email/Password)** and
+   **Firestore**.
 2. Copy `.env.local.example` to `.env.local` and fill in your project's web
    app config.
 3. `npm run dev` — the app now runs entirely against Firebase.
-4. Deploy `firestore.rules` and `storage.rules` (`firebase deploy --only firestore:rules,storage`)
-   so each business's data is only readable/writable by its owner.
+4. Deploy `firestore.rules` (`firebase deploy --only firestore:rules`) so each
+   business's data is only readable/writable by its owner.
 
 ## Core automation
 
@@ -95,7 +94,7 @@ src/
     data/
       provider.ts               DataProvider interface
       localProvider.ts          Local demo-mode implementation
-      firebaseProvider.ts       Firestore/Auth/Storage implementation
+      firebaseProvider.ts       Firestore/Auth implementation
     demoData.ts                Realistic demo dataset generator
   contexts/                   Auth + business data React contexts
   components/                 UI primitives and feature components

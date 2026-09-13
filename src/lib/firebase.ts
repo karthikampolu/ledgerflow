@@ -1,20 +1,18 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
-import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 /**
  * LedgerFlow can run in two modes:
- *  - Firebase mode: real Auth + Firestore + Storage, once NEXT_PUBLIC_FIREBASE_*
+ *  - Firebase mode: real Auth + Firestore, once NEXT_PUBLIC_FIREBASE_*
  *    env vars are set to a real project's config (see .env.local.example).
  *  - Local demo mode: a browser-local data provider with the identical
  *    interface, seeded with realistic demo data, so the full app works
@@ -30,16 +28,13 @@ export const isFirebaseConfigured = Boolean(
 let app: FirebaseApp | undefined;
 let authInstance: Auth | undefined;
 let dbInstance: Firestore | undefined;
-let storageInstance: FirebaseStorage | undefined;
 
 if (isFirebaseConfigured) {
   app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   authInstance = getAuth(app);
   dbInstance = getFirestore(app);
-  storageInstance = getStorage(app);
 }
 
 export const firebaseApp = app;
 export const auth = authInstance;
 export const firestore = dbInstance;
-export const storage = storageInstance;
