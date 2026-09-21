@@ -22,20 +22,33 @@ export function formatDate(iso: string): string {
   return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
+/**
+ * Formats a Date as a local "YYYY-MM-DD" string using its local
+ * year/month/day fields — never via toISOString(), which converts to UTC
+ * and silently shifts the date backward in any timezone ahead of UTC
+ * (e.g. IST, UTC+5:30) whenever local time is close to midnight.
+ */
+export function toLocalIso(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  return toLocalIso(new Date());
 }
 
 export function isoDaysAgo(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
+  return toLocalIso(d);
 }
 
 export function isoDaysFromNow(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
+  return toLocalIso(d);
 }
 
 export function startOfMonth(iso: string): string {
@@ -46,7 +59,7 @@ export function endOfMonth(iso: string): string {
   const d = new Date(iso.slice(0, 7) + "-01T00:00:00");
   d.setMonth(d.getMonth() + 1);
   d.setDate(0);
-  return d.toISOString().slice(0, 10);
+  return toLocalIso(d);
 }
 
 export function startOfYear(iso: string): string {

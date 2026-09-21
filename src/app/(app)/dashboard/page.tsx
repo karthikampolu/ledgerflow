@@ -6,7 +6,7 @@ import { useBusinessData } from "@/contexts/BusinessDataContext";
 import { StatCard } from "@/components/ui/StatCard";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { Badge, statusTone } from "@/components/ui/Badge";
-import { currencySymbol, formatCurrency, formatDate, startOfMonth, startOfYear, todayIso } from "@/lib/utils";
+import { currencySymbol, formatCurrency, formatDate, startOfMonth, startOfYear, todayIso, toLocalIso } from "@/lib/utils";
 import { computeProfitAndLoss } from "@/lib/accounting/reports";
 import { getAccountBalance } from "@/lib/accounting/ledger";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -39,7 +39,7 @@ export default function DashboardPage() {
     const now = new Date();
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const key = d.toISOString().slice(0, 7);
+      const key = toLocalIso(d).slice(0, 7);
       months.push({ key, label: d.toLocaleDateString("en-US", { month: "short" }) });
     }
     return months.map(({ key, label }) => {
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       const end = new Date(key + "-01T00:00:00");
       end.setMonth(end.getMonth() + 1);
       end.setDate(0);
-      const pl = computeProfitAndLoss(accounts, journalEntries, start, end.toISOString().slice(0, 10));
+      const pl = computeProfitAndLoss(accounts, journalEntries, start, toLocalIso(end));
       return { month: label, revenue: pl.totalRevenue, expenses: pl.totalCogs + pl.totalOperatingExpenses, netIncome: pl.netIncome };
     });
   }, [accounts, journalEntries]);
